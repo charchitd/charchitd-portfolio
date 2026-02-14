@@ -1,3 +1,3 @@
-##charchit-portfolio
+## charchitd-portfolio
 
 My Portfolio Website
