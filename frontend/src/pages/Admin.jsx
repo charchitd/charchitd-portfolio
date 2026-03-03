@@ -9,6 +9,10 @@ const Admin = () => {
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
   const [saveStatus, setSaveStatus] = useState('');
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordChangeStatus, setPasswordChangeStatus] = useState('');
 
   useEffect(() => {
     if (authToken && !isAdmin) {
@@ -43,6 +47,36 @@ const Admin = () => {
   const handleLogout = () => {
     setAuthToken(null);
     setIsAdmin(false);
+  };
+
+  const handleChangePassword = async () => {
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      setPasswordChangeStatus("All fields are required.");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setPasswordChangeStatus("New passwords do not match.");
+      return;
+    }
+    setPasswordChangeStatus("Updating...");
+    try {
+      const res = await fetch(`${API_URL}/auth/password`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+        body: JSON.stringify({ currentPassword, newPassword })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setPasswordChangeStatus("Password updated successfully!");
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+      } else {
+        setPasswordChangeStatus(data.error || "Failed to update password.");
+      }
+    } catch (err) {
+      setPasswordChangeStatus("Server error.");
+    }
   };
 
   const handleProfileChange = (e) => {
@@ -217,6 +251,25 @@ const Admin = () => {
           <label style={labelStyle}>Bio
             <textarea name="bio" value={profile.bio} onChange={handleProfileChange} style={{ ...inputStyle, minHeight: '100px' }} />
           </label>
+        </div>
+      </div>
+
+      <div className="glass-panel" style={{ padding: '30px', marginBottom: '30px' }}>
+        <h2 style={{ marginBottom: '20px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '10px' }}>Change Password</h2>
+        <div style={{ display: 'grid', gap: '15px' }}>
+          <label style={labelStyle}>Current Password
+            <input type="password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} style={inputStyle} />
+          </label>
+          <label style={labelStyle}>New Password
+            <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} style={inputStyle} />
+          </label>
+          <label style={labelStyle}>Confirm New Password
+            <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} style={inputStyle} />
+          </label>
+          <button onClick={handleChangePassword} style={{ ...btnStyle, marginTop: '10px', background: 'rgba(255,255,255,0.1)', width: 'auto', alignSelf: 'flex-start' }}>
+            Update Password
+          </button>
+          {passwordChangeStatus && <p style={{ color: passwordChangeStatus.includes('success') ? '#10b981' : '#ef4444', fontSize: '0.9rem', marginTop: '10px' }}>{passwordChangeStatus}</p>}
         </div>
       </div>
 

@@ -49,6 +49,25 @@ app.post('/api/auth/login', async (req, res) => {
     }
 });
 
+app.put('/api/auth/password', authenticateToken, async (req, res) => {
+    const { currentPassword, newPassword } = req.body;
+    if (!newPassword || !currentPassword) return res.status(400).json({ error: "Current and new required" });
+
+    try {
+        const result = await db.query('SELECT "passwordHash" FROM profile WHERE id = 1');
+        const row = result.rows[0];
+
+        const match = bcrypt.compareSync(currentPassword, row.passwordHash);
+        if (!match) return res.status(401).json({ error: "Incorrect current password." });
+
+        const newHash = bcrypt.hashSync(newPassword, 10);
+        await db.query(`UPDATE profile SET "passwordHash" = $1 WHERE id = 1`, [newHash]);
+        res.json({ message: "Password updated successfully" });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // --- PROFILE ---
 app.get('/api/profile', async (req, res) => {
     try {
