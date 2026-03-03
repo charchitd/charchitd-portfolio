@@ -71,7 +71,7 @@ app.put('/api/auth/password', authenticateToken, async (req, res) => {
 // --- PROFILE ---
 app.get('/api/profile', async (req, res) => {
     try {
-        const result = await db.query("SELECT * FROM profile WHERE id = 1");
+        const result = await db.query('SELECT id, name, title, bio, email, location, phone, image FROM profile WHERE id = 1');
         res.json(result.rows[0] || {});
     } catch (err) {
         res.status(500).json({ error: err.message });
