@@ -218,7 +218,7 @@ const Admin = () => {
           </form>
 
           <div style={{ marginTop: '20px', fontSize: '0.8rem', color: 'rgba(255,255,255,0.4)', display: 'flex', alignItems: 'center', gap: '5px', justifyContent: 'center' }}>
-            <AlertCircle size={14} /> Backend Auth Active. Default Password: 'admin123'
+            <AlertCircle size={14} /> Backend Auth Active.
           </div>
         </motion.div>
       </div>
