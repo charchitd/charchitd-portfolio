@@ -34,7 +34,8 @@ const initializeDatabase = async () => {
             "passwordHash" TEXT
         )`);
 
-        const defaultHash = bcrypt.hashSync('admin123', 10);
+        const seedPassword = process.env.ADMIN_PASSWORD || 'admin123';
+        const defaultHash = bcrypt.hashSync(seedPassword, 10);
         await pool.query(`INSERT INTO profile (id, name, title, bio, email, location, phone, image, "githubAuthUser", "passwordHash") 
           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
             [1, "Charchit Dhawan", "AI Product Manager · Builder · Open-Source Contributor", "AI Product Manager who ships. Built Varity v0.1, an open-source Python package on PyPI with a novel Verdict Stability Score (VSS) metric for production-grade LLM self-checking. Shipped multiple products including an MCP Fairness Server and BookWise AI.", "charchitdhawan@gmail.com", "Remote / Global", "+91 8896 121 553", "", "charchitd", defaultHash]

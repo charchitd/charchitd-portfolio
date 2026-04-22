@@ -8,7 +8,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const JWT_SECRET = "portfolio-secret-key-123";
+const JWT_SECRET = process.env.JWT_SECRET || "portfolio-secret-key-123";
 
 // Authentication Middleware
 const authenticateToken = (req, res, next) => {
@@ -36,7 +36,7 @@ app.post('/api/auth/login', async (req, res) => {
         if (row && row.githubAuthUser.toLowerCase() === githubUser.trim().toLowerCase()) {
             const match = bcrypt.compareSync(password, row.passwordHash);
             if (match) {
-                const token = jwt.sign({ user: githubUser }, JWT_SECRET, { expiresIn: '24h' });
+                const token = jwt.sign({ user: githubUser }, JWT_SECRET, { expiresIn: '15m' });
                 res.json({ token });
             } else {
                 res.status(401).json({ error: "Invalid password." });
