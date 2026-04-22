@@ -59,9 +59,9 @@ const Collaborators = () => {
         }`}
       >
         <h2 className="font-display font-bold text-display-1 text-white leading-[0.95]">
-          Working with
+          Engaged with
           <br />
-          <span className="text-coral">research teams</span>
+          <span className="text-coral">Global Research</span>
         </h2>
       </div>
 
@@ -73,7 +73,8 @@ const Collaborators = () => {
         style={{ transitionDelay: '200ms' }}
       >
         <p className="text-white/70 text-lg leading-relaxed">
-          From academic labs to industry R&D, I partner on experiments that prioritize reproducibility and measurable outcomes.
+          From SUTD Singapore and IISc Bangalore to enterprise productivity projects, 
+          I partner with labs and companies to deliver AI that works beyond the demo.
         </p>
       </div>
 

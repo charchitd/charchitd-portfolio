@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.env
+.env.local
+.env.*.local
+.DS_Store
+*.zip
+*.tar.gz
+charchit-portfolio/
+charchit-portfolio-deploy/
+charchit-portfolio-source/
+deploy/
+ziAXzoPl
+ziKGlStD
+zicM6YHF
+zimEN8Uz

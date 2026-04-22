@@ -60,7 +60,7 @@ const Philosophy = () => {
       >
         <h2 className="font-display font-bold text-display-1 text-white leading-[0.95]">
           <span className="block">Building AI that</span>
-          <span className="block text-coral">earns trust</span>
+          <span className="block text-coral">ships & lasts</span>
         </h2>
       </div>
 
@@ -72,8 +72,9 @@ const Philosophy = () => {
         style={{ transitionDelay: '300ms' }}
       >
         <p className="text-center text-white/70 text-lg leading-relaxed">
-          Trust isn't a feature you add later. It's the result of clear metrics, reproducible experiments, 
-          and designs that account for real-world trade-offs between fairness, privacy, and performance.
+          Product value isn't a feature you add later. It's the result of clear metrics, 
+          working agents, and architecture that accounts for real-world trade-offs 
+          between accuracy, cost, and user trust.
         </p>
       </div>
     </section>

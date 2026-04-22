@@ -33,6 +33,27 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, []);
 
   const checkAuth = async (): Promise<boolean> => {
+    // Check for existing password-based session and expiry
+    const localSession = localStorage.getItem('admin_session');
+    if (localSession) {
+      try {
+        const sessionData = JSON.parse(localSession);
+        const loginTime = sessionData.loginTime || 0;
+        const now = Date.now();
+        
+        // 15 minutes expiry check
+        if (now - loginTime > 15 * 60 * 1000) {
+          localStorage.removeItem('admin_session');
+        } else {
+          setUser(sessionData.user);
+          setIsLoading(false);
+          return true;
+        }
+      } catch (e) {
+        localStorage.removeItem('admin_session');
+      }
+    }
+
     const token = localStorage.getItem('github_token');
     if (!token) {
       setIsLoading(false);
@@ -89,17 +110,27 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const authUrl = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=${scope}`;
       window.location.href = authUrl;
     } else {
-      // Simple password auth for demo
+      // Simple password auth
       const password = prompt('Enter admin password:');
-      if (password === 'admin123') { // Change this to a secure password
+      const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD;
+      
+      if (!adminPassword) {
+        alert('Admin password not configured in environment (VITE_ADMIN_PASSWORD).');
+        return;
+      }
+
+      if (password === adminPassword) {
         const mockUser: AdminUser = {
           id: '1',
-          login: 'charchitd',
-          name: 'Charchit Dhawan',
+          login: 'admin',
+          name: 'Admin User',
           avatar_url: '/images/hero_portrait.jpg'
         };
         setUser(mockUser);
-        localStorage.setItem('admin_session', JSON.stringify(mockUser));
+        localStorage.setItem('admin_session', JSON.stringify({
+          user: mockUser,
+          loginTime: Date.now()
+        }));
       } else {
         alert('Invalid password');
       }

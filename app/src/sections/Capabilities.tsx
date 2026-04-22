@@ -2,12 +2,12 @@ import { useEffect, useRef, useState } from 'react';
 import { Code, Database, Brain, LineChart, FileCode, Microscope } from 'lucide-react';
 
 const skills = [
-  { name: 'Python & SQL', icon: <Code className="w-5 h-5" />, level: 95 },
-  { name: 'Machine Learning', icon: <Brain className="w-5 h-5" />, level: 90 },
-  { name: 'NLP & LLMs', icon: <FileCode className="w-5 h-5" />, level: 88 },
-  { name: 'Data Analysis', icon: <LineChart className="w-5 h-5" />, level: 92 },
-  { name: 'PyTorch/TensorFlow', icon: <Database className="w-5 h-5" />, level: 85 },
-  { name: 'Research Methods', icon: <Microscope className="w-5 h-5" />, level: 90 },
+  { name: 'AI / LLM Builder', icon: <Brain className="w-5 h-5" />, level: 95 },
+  { name: 'Product Management', icon: <Code className="w-5 h-5" />, level: 92 },
+  { name: 'Data Analysis (SQL/R)', icon: <LineChart className="w-5 h-5" />, level: 90 },
+  { name: 'Engineering (Next.js)', icon: <FileCode className="w-5 h-5" />, level: 88 },
+  { name: 'Responsible AI', icon: <Shield className="w-5 h-5" />, level: 94 },
+  { name: 'Research (35+ Citations)', icon: <Microscope className="w-5 h-5" />, level: 90 },
 ];
 
 const Capabilities = () => {

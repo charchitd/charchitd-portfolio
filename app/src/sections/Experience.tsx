@@ -7,65 +7,73 @@ interface ExperienceItem {
   location: string;
   period: string;
   description: string;
-  type: 'work' | 'education' | 'research';
+  type: 'work' | 'education' | 'research' | 'recognition';
 }
 
 const experiences: ExperienceItem[] = [
   {
-    title: 'Graduate Research Assistant',
-    organization: 'Aston Business School',
-    location: 'Birmingham, UK',
-    period: 'May 2024 - June 2025',
-    description: 'Conducted advanced research on LLMs and semi-supervised learning to automate document classification. Developed efficient NLP pipelines.',
-    type: 'research',
+    title: 'Freelance AI Researcher & Product Builder',
+    organization: 'Independent AI Product Practice',
+    location: 'Remote',
+    period: 'Jan 2026 – Present',
+    description: 'Built and shipped Varity v0.1 (open-source on PyPI) and an MCP fairness-governance server with six callable tools used live in client engagements. Designed agentic workflows in Claude Code resulting in ~40% reduction in research effort.',
+    type: 'work',
   },
   {
     title: 'Technical Product Manager',
     organization: 'DailyDumbbell',
     location: 'Bangalore, India',
-    period: 'Sep 2022 - Feb 2024',
-    description: 'Led development of B2B2C SaaS fitness product. Managed cross-functional teams and drove strategic decision-making.',
+    period: 'Sep 2022 – Jan 2024',
+    description: 'Owned product end-to-end: lifted retention by 25% by translating raw engagement data into a re-prioritized roadmap. Secured $200,000 in credit funding via the Xartup Startup Fellowship.',
     type: 'work',
   },
   {
-    title: 'Visiting Researcher',
-    organization: 'CiSTUP, IISc',
-    location: 'Bangalore, India',
-    period: 'Oct 2022 - Dec 2022',
-    description: 'Researched smartphone-based Driving Behaviour and Events Analysis. Worked on real-world behavioral data.',
-    type: 'research',
-  },
-  {
-    title: 'Software Engineer, R&D',
+    title: 'Software Development Engineer (R&D)',
     organization: 'NeoSOFT Technologies',
     location: 'Bangalore, India',
-    period: 'July 2021 - July 2022',
-    description: 'Specialized in blockchain development with Hyperledger Fabric. Built secure REST APIs and smart contracts.',
+    period: 'Jul 2021 – Jul 2022',
+    description: 'Optimised SQL queries and backend architecture for a hospital management system serving 50K+ records — measured 30% transaction speed-up. Stack: MERN, REST API design.',
     type: 'work',
-  },
-  {
-    title: 'Research Intern',
-    organization: 'Lancaster University',
-    location: 'United Kingdom',
-    period: 'Jan 2021 - June 2021',
-    description: 'Synthetic Data Generation using Unity3D and Deep Learning. Created virtual city environments for computer vision research.',
-    type: 'research',
   },
   {
     title: 'MSc Business Analytics',
     organization: 'Aston Business School',
     location: 'Birmingham, UK',
-    period: '2024 - 2025',
-    description: 'Focus on Statistics, Machine Learning, Data Mining, and Analytical Risk Management.',
+    period: 'Apr 2024 – Jun 2025',
+    description: 'Merit / Distinction. Master\'s-level dissertation on LLM evaluation. Coursework: Predictive Analytics, Strategic Risk Management, Data-Driven Decision Making.',
     type: 'education',
   },
   {
-    title: 'B.Tech Computer Science',
-    organization: 'IIIT Naya Raipur',
+    title: 'B.Tech, Computer Science & Engineering',
+    organization: 'IIIT',
     location: 'India',
-    period: '2017 - 2021',
-    description: 'Core AI and ML, Web Development, Problem Solving, and Innovation.',
+    period: 'Aug 2017 – Jul 2021',
+    description: 'First Class Honours. Coursework: Machine Learning, Software Engineering, Product Management.',
     type: 'education',
+  },
+  {
+    title: 'Published Research — IEEE VTC 2020',
+    organization: 'IEEE',
+    location: 'Global',
+    period: '2020',
+    description: 'Peer-reviewed publication on machine-learning models for vehicular network state prediction. 35+ citations to date.',
+    type: 'research',
+  },
+  {
+    title: 'Xartup Startup Fellowship',
+    organization: 'Xartup',
+    location: 'India',
+    period: '2023',
+    description: '$200,000 in credit funding awarded for DailyDumbbell product strategy.',
+    type: 'recognition',
+  },
+  {
+    title: 'PMSchool × Paytm Insider Challenge',
+    organization: 'PMSchool',
+    location: 'India',
+    period: '2022',
+    description: 'Ranked 7th of 54 in a competitive product case study evaluation.',
+    type: 'recognition',
   },
 ];
 
@@ -121,6 +129,8 @@ const Experience = () => {
         return <Microscope className="w-4 h-4" />;
       case 'education':
         return <GraduationCap className="w-4 h-4" />;
+      case 'recognition':
+        return <Brain className="w-4 h-4" />;
       default:
         return <Briefcase className="w-4 h-4" />;
     }

@@ -6,9 +6,9 @@ const Hero = () => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    // Trigger load animation
-    const timer = setTimeout(() => setIsLoaded(true), 100);
-    return () => clearTimeout(timer);
+    // Trigger load animation immediately with requestAnimationFrame for better performance
+    const frameId = requestAnimationFrame(() => setIsLoaded(true));
+    return () => cancelAnimationFrame(frameId);
   }, []);
 
   const scrollToWork = () => {
@@ -40,7 +40,7 @@ const Hero = () => {
         }`}
         style={{ transitionDelay: '200ms' }}
       >
-        Researcher / PhD Applicant
+        AI Product Manager · Builder · Open-Source
       </div>
 
       {/* Socials - bottom left */}
@@ -51,7 +51,7 @@ const Hero = () => {
         style={{ transitionDelay: '800ms' }}
       >
         <a
-          href="https://linkedin.com/in/charchit-dhawan-902232110"
+          href="https://linkedin.com/in/charchit-dhawan"
           target="_blank"
           rel="noopener noreferrer"
           className="text-white/40 hover:text-coral transition-colors"
@@ -67,12 +67,12 @@ const Hero = () => {
           <Github className="w-4 h-4" />
         </a>
         <a
-          href="https://scholar.google.com"
+          href="https://charchitdhawan@gmail.com"
           target="_blank"
           rel="noopener noreferrer"
           className="text-white/40 hover:text-coral transition-colors"
         >
-          <BookOpen className="w-4 h-4" />
+          <Mail className="w-4 h-4" />
         </a>
       </div>
 
@@ -86,6 +86,8 @@ const Hero = () => {
           src="/images/hero_portrait.jpg"
           alt="Charchit Dhawan"
           className="w-full h-full object-cover image-grade"
+          fetchPriority="high"
+          loading="eager"
         />
       </div>
 
@@ -99,9 +101,9 @@ const Hero = () => {
             }`}
             style={{ transitionDelay: '300ms' }}
           >
-            <span className="inline-block">Charchit</span>
+            <span className="inline-block">AI PM</span>
             <br />
-            <span className="inline-block">Dhawan</span>
+            <span className="inline-block text-coral">who ships.</span>
           </h1>
         </div>
 
@@ -113,7 +115,7 @@ const Hero = () => {
           style={{ transitionDelay: '600ms' }}
         >
           <p className="text-lg md:text-xl text-white/70 font-light">
-            Responsible AI · Fairness · Transparency · Governance
+            Built Varity v0.1 (PyPI) · MCP Fairness Server · Published Researcher (35+ citations)
           </p>
         </div>
 

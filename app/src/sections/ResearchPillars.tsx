@@ -45,7 +45,7 @@ const ResearchPillars = () => {
           style={{ transitionDelay: '100ms' }}
         >
           <h2 className="font-display font-bold text-display-2 text-white">
-            Fairness in
+            Shipped
           </h2>
         </div>
         <div
@@ -55,7 +55,7 @@ const ResearchPillars = () => {
           style={{ transitionDelay: '200ms' }}
         >
           <h2 className="font-display font-bold text-display-2 text-white">
-            hiring systems
+            Open-Source lib
           </h2>
         </div>
         <div
@@ -65,10 +65,10 @@ const ResearchPillars = () => {
           style={{ transitionDelay: '300ms' }}
         >
           <h2 className="font-display font-bold text-display-2 text-coral">
-            Transparency
+            Peer-reviewed
           </h2>
           <span className="font-display font-bold text-display-2 text-white">
-            in AI decisions
+            Research
           </span>
         </div>
         <div
@@ -78,10 +78,10 @@ const ResearchPillars = () => {
           style={{ transitionDelay: '400ms' }}
         >
           <h2 className="font-display font-bold text-display-2 text-coral">
-            Accountability
+            Working Agents
           </h2>
           <span className="font-display font-bold text-display-2 text-white">
-            across the pipeline
+            in Prod
           </span>
         </div>
       </div>
@@ -107,7 +107,7 @@ const ResearchPillars = () => {
         style={{ transitionDelay: '600ms' }}
       >
         <p className="text-sm text-white/60 leading-relaxed">
-          I design experiments and metrics that make trade-offs visible—so systems can be improved, not just deployed.
+          Hiring me means hiring someone who has gone deep on a shipped library, a peer-reviewed artefact, and a working agent.
         </p>
       </div>
     </section>
