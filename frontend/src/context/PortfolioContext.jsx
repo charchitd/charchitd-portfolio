@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useCallback } from 'react';
 
 export const PortfolioContext = createContext();
 
@@ -13,6 +13,44 @@ export const PortfolioProvider = ({ children }) => {
   // In Vercel, requests to /api are automatically routed to the backend serverless functions.
   // In local development, we need to point to localhost:5000 if not running through a proxy.
   const API_URL = import.meta.env.VITE_API_URL || '/api';
+
+  // Helper: check if a JWT token is expired by decoding its payload
+  const isTokenExpired = useCallback((token) => {
+    if (!token) return true;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.exp * 1000 < Date.now();
+    } catch {
+      return true;
+    }
+  }, []);
+
+  // Logout helper
+  const logout = useCallback(() => {
+    setAuthToken(null);
+    setIsAdmin(false);
+    localStorage.removeItem('admin_token');
+  }, []);
+
+  // Validate stored token on mount
+  useEffect(() => {
+    if (authToken) {
+      if (isTokenExpired(authToken)) {
+        // Token is expired — clear it immediately
+        logout();
+      } else {
+        setIsAdmin(true);
+        // Set a timer to auto-logout when the token expires
+        const payload = JSON.parse(atob(authToken.split('.')[1]));
+        const msUntilExpiry = payload.exp * 1000 - Date.now();
+        const timer = setTimeout(() => {
+          logout();
+          alert('Your session has expired. Please log in again.');
+        }, msUntilExpiry);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [authToken, isTokenExpired, logout]);
 
   // Fetch initial data from backend
   useEffect(() => {
@@ -54,6 +92,7 @@ export const PortfolioProvider = ({ children }) => {
       thoughts, setThoughts,
       isAdmin, setIsAdmin,
       authToken, setAuthToken,
+      logout,
       API_URL
     }}>
       {children}

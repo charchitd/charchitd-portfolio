@@ -18,7 +18,12 @@ const authenticateToken = (req, res, next) => {
     if (token == null) return res.status(401).json({ error: "Unauthorized" });
 
     jwt.verify(token, JWT_SECRET, (err, user) => {
-        if (err) return res.status(403).json({ error: "Forbidden" });
+        if (err) {
+            if (err.name === 'TokenExpiredError') {
+                return res.status(401).json({ error: "Token expired. Please log in again." });
+            }
+            return res.status(403).json({ error: "Forbidden" });
+        }
         req.user = user;
         next();
     });
@@ -79,11 +84,12 @@ app.get('/api/profile', async (req, res) => {
 });
 
 app.put('/api/profile', authenticateToken, async (req, res) => {
-    const { name, title, bio, email, location, phone, image, githubAuthUser } = req.body;
+    const { name, title, bio, email, location, phone, image } = req.body;
     try {
+        // Preserve githubAuthUser — never allow the frontend form to overwrite it
         await db.query(
-            `UPDATE profile SET name = $1, title = $2, bio = $3, email = $4, location = $5, phone = $6, image = $7, "githubAuthUser" = $8 WHERE id = 1`,
-            [name, title, bio, email, location, phone, image, githubAuthUser]
+            `UPDATE profile SET name = $1, title = $2, bio = $3, email = $4, location = $5, phone = $6, image = $7 WHERE id = 1`,
+            [name, title, bio, email, location, phone, image]
         );
         res.json({ message: "Profile updated successfully" });
     } catch (err) {
