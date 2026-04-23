@@ -8,8 +8,7 @@ const bcrypt = require('bcryptjs');
 
 // Require DATABASE_URL - no insecure fallback
 if (!process.env.DATABASE_URL) {
-    console.error('FATAL: DATABASE_URL environment variable is required');
-    process.exit(1);
+    throw new Error('FATAL: DATABASE_URL environment variable is required');
 }
 
 const pool = new Pool({
@@ -41,8 +40,8 @@ const initializeDatabase = async () => {
         if (parseInt(profileCount.rows[0].count) === 0) {
             // Require strong admin password - no insecure fallback
             if (!process.env.ADMIN_PASSWORD) {
-                console.error('FATAL: ADMIN_PASSWORD environment variable is required for initial setup');
-                process.exit(1);
+                console.warn('WARNING: ADMIN_PASSWORD not set, skipping initial seed. Set ADMIN_PASSWORD env var for first-time setup.');
+                return;
             }
             const defaultHash = bcrypt.hashSync(process.env.ADMIN_PASSWORD, 10);
             await pool.query(`INSERT INTO profile (id, name, title, bio, email, location, phone, image, "githubAuthUser", "passwordHash") 
