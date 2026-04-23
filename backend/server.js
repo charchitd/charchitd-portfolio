@@ -1,17 +1,21 @@
-require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') });
+// Only load .env file in local development — Vercel injects env vars automatically
+if (!process.env.VERCEL) {
+    require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') });
+}
 
 const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const rateLimit = require('express-rate-limit');
 const db = require('./db');
 
 const app = express();
 
-// CORS: restrict to specific origin in production
+// CORS: On Vercel, frontend & backend share the same domain, so same-origin works.
+// In development, allow localhost. In production, restrict to FRONTEND_URL if set.
 const corsOptions = {
-    origin: process.env.FRONTEND_URL || '*',
+    origin: process.env.VERCEL ? true : (process.env.FRONTEND_URL || '*'),
     credentials: true
 };
 app.use(cors(corsOptions));
@@ -269,7 +273,13 @@ app.delete('/api/thoughts/:id', authenticateToken, async (req, res) => {
     }
 });
 
-const PORT = 5000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+// Vercel serverless: export the Express app as a module
+// For local development: run with `node server.js` which starts listening
+if (!process.env.VERCEL) {
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+    });
+}
+
+module.exports = app;

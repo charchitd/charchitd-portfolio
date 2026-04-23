@@ -1,7 +1,10 @@
-require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') });
+// Only load .env file in local development — Vercel injects env vars automatically
+if (!process.env.VERCEL) {
+    require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') });
+}
 
 const { Pool } = require('pg');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 // Require DATABASE_URL - no insecure fallback
 if (!process.env.DATABASE_URL) {
@@ -13,14 +16,8 @@ const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
 });
 
-pool.connect((err, client, release) => {
-    if (err) {
-        return console.error('Error acquiring client', err.stack);
-    }
-    console.log('Connected to Neon PostgreSQL database.');
-    release();
-    initializeDatabase();
-});
+// Lazy initialization: runs once on first query, works reliably in serverless
+let initPromise = null;
 
 const initializeDatabase = async () => {
     try {
@@ -146,7 +143,19 @@ const initializeDatabase = async () => {
     }
 };
 
+// Ensure database is initialized before first query (lazy, runs once)
+const ensureInitialized = () => {
+    if (!initPromise) {
+        initPromise = initializeDatabase();
+    }
+    return initPromise;
+};
+
 module.exports = {
-    query: (text, params) => pool.query(text, params),
+    query: async (text, params) => {
+        await ensureInitialized();
+        return pool.query(text, params);
+    },
     pool: pool
 };
+

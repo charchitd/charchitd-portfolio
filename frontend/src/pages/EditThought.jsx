@@ -27,9 +27,6 @@ const EditThought = () => {
             const existing = thoughts.find(t => t.id === id);
             if (existing) {
                 setFormData(existing);
-            } else {
-                const found = thoughts.find(t => t.id === id);
-                if (found) setFormData(found);
             }
         }
     }, [id, thoughts]);

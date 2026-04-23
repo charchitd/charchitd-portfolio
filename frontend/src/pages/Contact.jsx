@@ -34,15 +34,16 @@ const Contact = () => {
             if (response.ok) {
                 setStatus('success');
                 setFormData({ name: '', email: '', subject: '', message: '' });
+                setTimeout(() => setStatus('idle'), 4000);
             } else {
                 setStatus('error');
+                setTimeout(() => setStatus('idle'), 4000);
             }
         } catch (error) {
             console.error(error);
             setStatus('error');
+            setTimeout(() => setStatus('idle'), 4000);
         }
-
-        setTimeout(() => { if (status !== 'error') setStatus('idle'); }, 4000);
     };
 
     return (
