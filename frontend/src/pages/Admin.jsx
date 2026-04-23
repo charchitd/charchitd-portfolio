@@ -87,6 +87,9 @@ const Admin = () => {
       if (res.ok) {
         setAuthToken(data.token);
         setIsAdmin(true);
+        // Clear password from memory after successful login
+        setPassword('');
+        setGithubUser('');
       } else {
         setLoginError(data.error || 'Login failed.');
       }
@@ -108,8 +111,25 @@ const Admin = () => {
       setPasswordChangeStatus("New passwords do not match.");
       return;
     }
-    if (newPassword.length < 6) {
-      setPasswordChangeStatus("New password must be at least 6 characters.");
+    // Enforce strong password requirements
+    if (newPassword.length < 8) {
+      setPasswordChangeStatus("Password must be at least 8 characters.");
+      return;
+    }
+    if (!/[A-Z]/.test(newPassword)) {
+      setPasswordChangeStatus("Password must contain at least one uppercase letter.");
+      return;
+    }
+    if (!/[a-z]/.test(newPassword)) {
+      setPasswordChangeStatus("Password must contain at least one lowercase letter.");
+      return;
+    }
+    if (!/[0-9]/.test(newPassword)) {
+      setPasswordChangeStatus("Password must contain at least one number.");
+      return;
+    }
+    if (!/[^A-Za-z0-9]/.test(newPassword)) {
+      setPasswordChangeStatus("Password must contain at least one special character.");
       return;
     }
     setPasswordChangeStatus("Updating...");
@@ -161,15 +181,16 @@ const Admin = () => {
   };
 
   const deleteExperience = async (id) => {
-    setExperience(prev => prev.filter(exp => exp.id !== id));
-
     try {
       await authFetch(`${API_URL}/experience/${id}`, {
         method: 'DELETE',
       });
+      // Only update UI after successful backend deletion
+      setExperience(prev => prev.filter(exp => exp.id !== id));
     } catch (e) {
       if (e.message !== 'SESSION_EXPIRED') {
         console.error("Failed to delete experience", e);
+        alert('Failed to delete experience. Please try again.');
       }
     }
   };
@@ -196,15 +217,16 @@ const Admin = () => {
   };
 
   const deleteProject = async (id) => {
-    setProjects(prev => prev.filter(proj => proj.id !== id));
-
     try {
       await authFetch(`${API_URL}/projects/${id}`, {
         method: 'DELETE',
       });
+      // Only update UI after successful backend deletion
+      setProjects(prev => prev.filter(proj => proj.id !== id));
     } catch (e) {
       if (e.message !== 'SESSION_EXPIRED') {
         console.error("Failed to delete project", e);
+        alert('Failed to delete project. Please try again.');
       }
     }
   };

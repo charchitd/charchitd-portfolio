@@ -1,11 +1,16 @@
+require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') });
+
 const { Pool } = require('pg');
 const bcrypt = require('bcrypt');
 
-// The free Neon tech postgres connection string
-const connectionString = process.env.DATABASE_URL || "postgresql://neondb_owner:npg_YoUMKNmi71Fy@ep-late-feather-absup3ii-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require";
+// Require DATABASE_URL - no insecure fallback
+if (!process.env.DATABASE_URL) {
+    console.error('FATAL: DATABASE_URL environment variable is required');
+    process.exit(1);
+}
 
 const pool = new Pool({
-    connectionString,
+    connectionString: process.env.DATABASE_URL,
 });
 
 pool.connect((err, client, release) => {
@@ -37,8 +42,12 @@ const initializeDatabase = async () => {
         // Only seed if table is empty (first deployment)
         const profileCount = await pool.query("SELECT count(*) as count FROM profile");
         if (parseInt(profileCount.rows[0].count) === 0) {
-            const seedPassword = process.env.ADMIN_PASSWORD || 'admin123';
-            const defaultHash = bcrypt.hashSync(seedPassword, 10);
+            // Require strong admin password - no insecure fallback
+            if (!process.env.ADMIN_PASSWORD) {
+                console.error('FATAL: ADMIN_PASSWORD environment variable is required for initial setup');
+                process.exit(1);
+            }
+            const defaultHash = bcrypt.hashSync(process.env.ADMIN_PASSWORD, 10);
             await pool.query(`INSERT INTO profile (id, name, title, bio, email, location, phone, image, "githubAuthUser", "passwordHash") 
               VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
                 [1, "Charchit Dhawan", "AI Product Manager · Builder · Open-Source Contributor", "AI Product Manager who ships. Built Varity v0.1, an open-source Python package on PyPI with a novel Verdict Stability Score (VSS) metric for production-grade LLM self-checking. Shipped multiple products including an MCP Fairness Server and BookWise AI.", "charchitdhawan@gmail.com", "Remote / Global", "+91 8896 121 553", "", "charchitd", defaultHash]

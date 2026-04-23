@@ -1,14 +1,37 @@
+require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') });
+
 const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const rateLimit = require('express-rate-limit');
 const db = require('./db');
 
 const app = express();
-app.use(cors());
+
+// CORS: restrict to specific origin in production
+const corsOptions = {
+    origin: process.env.FRONTEND_URL || '*',
+    credentials: true
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 
-const JWT_SECRET = process.env.JWT_SECRET || "portfolio-secret-key-123";
+// Require JWT_SECRET - no insecure fallback
+if (!process.env.JWT_SECRET) {
+    console.error('FATAL: JWT_SECRET environment variable is required');
+    process.exit(1);
+}
+const JWT_SECRET = process.env.JWT_SECRET;
+
+// Rate limiting for login endpoint - prevent brute force
+const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 5, // 5 attempts per window
+    message: { error: 'Too many login attempts. Please try again in 15 minutes.' },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
 
 // Authentication Middleware
 const authenticateToken = (req, res, next) => {
@@ -29,8 +52,18 @@ const authenticateToken = (req, res, next) => {
     });
 };
 
+// Password strength validation helper
+const validatePasswordStrength = (password) => {
+    if (password.length < 8) return 'Password must be at least 8 characters';
+    if (!/[A-Z]/.test(password)) return 'Password must contain at least one uppercase letter';
+    if (!/[a-z]/.test(password)) return 'Password must contain at least one lowercase letter';
+    if (!/[0-9]/.test(password)) return 'Password must contain at least one number';
+    if (!/[^A-Za-z0-9]/.test(password)) return 'Password must contain at least one special character';
+    return null;
+};
+
 // --- AUTHENTICATION ---
-app.post('/api/auth/login', async (req, res) => {
+app.post('/api/auth/login', loginLimiter, async (req, res) => {
     const { githubUser, password } = req.body;
     if (!githubUser || !password) return res.status(400).json({ error: "GitHub user and password required" });
 
@@ -38,7 +71,7 @@ app.post('/api/auth/login', async (req, res) => {
         const result = await db.query('SELECT "githubAuthUser", "passwordHash" FROM profile WHERE id = 1');
         const row = result.rows[0];
 
-        if (row && row.githubAuthUser.toLowerCase() === githubUser.trim().toLowerCase()) {
+        if (row && row.githubAuthUser && row.githubAuthUser.toLowerCase() === githubUser.trim().toLowerCase()) {
             const match = bcrypt.compareSync(password, row.passwordHash);
             if (match) {
                 const token = jwt.sign({ user: githubUser }, JWT_SECRET, { expiresIn: '15m' });
@@ -57,6 +90,10 @@ app.post('/api/auth/login', async (req, res) => {
 app.put('/api/auth/password', authenticateToken, async (req, res) => {
     const { currentPassword, newPassword } = req.body;
     if (!newPassword || !currentPassword) return res.status(400).json({ error: "Current and new required" });
+
+    // Validate password strength
+    const strengthError = validatePasswordStrength(newPassword);
+    if (strengthError) return res.status(400).json({ error: strengthError });
 
     try {
         const result = await db.query('SELECT "passwordHash" FROM profile WHERE id = 1');
